@@ -1117,6 +1117,37 @@ namespace QuantConnect
                         return Exchange.MEMX;
                     case "CSFB":
                         return Exchange.CSFB;
+                    case "XPAR":
+                    case "SBF":
+                    case "EURONEXT_PARIS":
+                        return Exchange.EURONEXT_PARIS;
+                    case "XAMS":
+                    case "AEB":
+                    case "EURONEXT_AMSTERDAM":
+                        return Exchange.EURONEXT_AMSTERDAM;
+                    case "XBRU":
+                    case "ENEXT.BE":
+                    case "EURONEXT_BRUSSELS":
+                        return Exchange.EURONEXT_BRUSSELS;
+                    case "XMSM":
+                    case "ISED":
+                    case "EURONEXT_DUBLIN":
+                        return Exchange.EURONEXT_DUBLIN;
+                    case "MTAA":
+                    case "XMIL":
+                    case "BVME":
+                    case "EURONEXT_MILAN":
+                        return Exchange.EURONEXT_MILAN;
+                    case "XLIS":
+                    case "BVL":
+                    case "EURONEXT_LISBON":
+                        return Exchange.EURONEXT_LISBON;
+                    case "XOSL":
+                    case "EURONEXT_OSLO":
+                        return Exchange.EURONEXT_OSLO;
+                    // Interactive Brokers' code for Oslo, ambiguous with Lean's Osaka market
+                    case "OSE":
+                        return market == Market.EuronextOslo ? Exchange.EURONEXT_OSLO : Exchange.UNKNOWN;
                 }
             }
             else if (securityType == SecurityType.Option)
@@ -1193,6 +1224,20 @@ namespace QuantConnect
                         return Exchange.NYSELIFFE;
                     case "EUREX":
                         return Exchange.EUREX;
+                    case "MONEP":
+                    case "EURONEXT_PARIS":
+                        return Exchange.EURONEXT_PARIS;
+                    case "FTA":
+                    case "EURONEXT_AMSTERDAM":
+                        return Exchange.EURONEXT_AMSTERDAM;
+                    case "BELFOX":
+                    case "EURONEXT_BRUSSELS":
+                        return Exchange.EURONEXT_BRUSSELS;
+                    case "IDEM":
+                    case "EURONEXT_MILAN":
+                        return Exchange.EURONEXT_MILAN;
+                    case "EURONEXT_OSLO":
+                        return Exchange.EURONEXT_OSLO;
                     default:
                         return Exchange.UNKNOWN;
                 }

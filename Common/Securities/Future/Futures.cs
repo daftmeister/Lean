@@ -1568,6 +1568,48 @@ namespace QuantConnect.Securities
             public const string HangSeng = "HSI";
 
             /// <summary>
+            /// CAC 40 Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string CAC40 = "FCE";
+
+            /// <summary>
+            /// Mini CAC 40 Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string CAC40Mini = "MFC";
+
+            /// <summary>
+            /// AEX Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string AEX = "FTI";
+
+            /// <summary>
+            /// BEL 20 Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string BEL20 = "BXF";
+
+            /// <summary>
+            /// FTSE MIB Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string FTSEMIB = "FIB";
+
+            /// <summary>
+            /// Mini FTSE MIB Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string FTSEMIBMini = "MINI";
+
+            /// <summary>
+            /// OBX Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string OBX = "OBF";
+
+            /// <summary>
             /// KOSPI 200 Index Futures
             /// </summary>
             /// <returns>The symbol</returns>

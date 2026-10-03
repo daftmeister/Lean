@@ -3965,8 +3965,24 @@ namespace QuantConnect
         public static bool IsAvailableForFutureMarket(this DataMappingMode dataMappingMode, string market)
         {
             return dataMappingMode != DataMappingMode.OpenInterest && dataMappingMode != DataMappingMode.OpenInterestAnnual
-                || market != Market.HKFE && market != Market.EUREX && market != Market.ICE && market != Market.KRX;
+                || !_futureMarketsWithoutOpenInterestMapping.Contains(market);
         }
+
+        /// <summary>
+        /// Future markets for which there is no open interest based mapping data
+        /// </summary>
+        private static readonly HashSet<string> _futureMarketsWithoutOpenInterestMapping = new()
+        {
+            Market.HKFE,
+            Market.EUREX,
+            Market.ICE,
+            Market.KRX,
+            Market.EuronextParis,
+            Market.EuronextAmsterdam,
+            Market.EuronextBrussels,
+            Market.EuronextMilan,
+            Market.EuronextOslo
+        };
 
         /// <summary>
         /// Helper method to determine the right data normalization mode to use by default

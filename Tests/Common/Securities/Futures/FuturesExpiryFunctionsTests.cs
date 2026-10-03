@@ -17,6 +17,7 @@ using System;
 using NUnit.Framework;
 using QuantConnect.Securities.Future;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
@@ -57,6 +58,9 @@ namespace QuantConnect.Tests.Common.Securities.Futures
         private const string ThreeThirtyPM = "15:30:00";
         private const string FourFifteenPM = "16:15:00";
         private const string ThreeTwentyPMKoreaTime = "15:20:00";
+        private const string FourPMCentralEuropeanTime = "16:00:00";
+        private const string FourTwentyPMCentralEuropeanTime = "16:20:00";
+        private const string NineOFiveAMCentralEuropeanTime = "09:05:00";
         private readonly SymbolPropertiesDatabase _symbolPropertiesDatabase = SymbolPropertiesDatabase.FromDataFolder();
 
         [OneTimeSetUp]
@@ -116,6 +120,27 @@ namespace QuantConnect.Tests.Common.Securities.Futures
             var canonical = Symbol.Create(QuantConnect.Securities.Futures.Indices.Kospi200, SecurityType.Future, Market.KRX);
             var expiration = FuturesExpiryFunctions.FuturesExpiryDictionary[canonical];
             Assert.AreEqual(expected, expiration(date));
+        }
+
+        // monthly contracts don't roll to the quarterly cycle
+        [TestCase(QuantConnect.Securities.Futures.Indices.CAC40, Market.EuronextParis, "20250101", "20250117 16:00")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.AEX, Market.EuronextAmsterdam, "20250201", "20250221 16:00")]
+        // Good Friday 4/18/2025 is the 3rd Friday: the preceding business day
+        [TestCase(QuantConnect.Securities.Futures.Indices.CAC40Mini, Market.EuronextParis, "20250401", "20250417 16:00")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.BEL20, Market.EuronextBrussels, "20250401", "20250417 16:00")]
+        // quarterly contracts roll forward to the Mar/Jun/Sep/Dec cycle
+        [TestCase(QuantConnect.Securities.Futures.Indices.FTSEMIB, Market.EuronextMilan, "20250101", "20250321 09:05")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.FTSEMIBMini, Market.EuronextMilan, "20250401", "20250620 09:05")]
+        // 5/17/2024 (Constitution Day) is the 3rd Friday and a holiday in Oslo, 4/17/2025 (Maundy Thursday) as well
+        [TestCase(QuantConnect.Securities.Futures.Indices.OBX, Market.EuronextOslo, "20240501", "20240516 16:20")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.OBX, Market.EuronextOslo, "20250401", "20250416 16:20")]
+        public void EuronextIndexFutures(string ticker, string market, string input, string expectedStr)
+        {
+            var canonical = Symbol.Create(ticker, SecurityType.Future, market);
+            var expiration = FuturesExpiryFunctions.FuturesExpiryDictionary[canonical];
+
+            var expected = DateTime.ParseExact(expectedStr, "yyyyMMdd HH:mm", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, expiration(Time.ParseDate(input)));
         }
 
         [Test]
@@ -459,6 +484,13 @@ namespace QuantConnect.Tests.Common.Securities.Futures
         [TestCase(QuantConnect.Securities.Futures.Indices.MSCIEmergingMarketsAsiaNTR, FourFifteenPM)]
         [TestCase(QuantConnect.Securities.Futures.Indices.MSCIEmergingMarketsIndex, FourFifteenPM)]
         [TestCase(QuantConnect.Securities.Futures.Indices.MSCIEafeIndex, FourFifteenPM)]
+        [TestCase(QuantConnect.Securities.Futures.Indices.CAC40, FourPMCentralEuropeanTime)]
+        [TestCase(QuantConnect.Securities.Futures.Indices.CAC40Mini, FourPMCentralEuropeanTime)]
+        [TestCase(QuantConnect.Securities.Futures.Indices.AEX, FourPMCentralEuropeanTime)]
+        [TestCase(QuantConnect.Securities.Futures.Indices.BEL20, FourPMCentralEuropeanTime)]
+        [TestCase(QuantConnect.Securities.Futures.Indices.FTSEMIB, NineOFiveAMCentralEuropeanTime)]
+        [TestCase(QuantConnect.Securities.Futures.Indices.FTSEMIBMini, NineOFiveAMCentralEuropeanTime)]
+        [TestCase(QuantConnect.Securities.Futures.Indices.OBX, FourTwentyPMCentralEuropeanTime)]
         public void IndicesExpiryDateFunction_WithDifferentDates_ShouldFollowContract(string symbol, string dayTime)
         {
             Assert.IsTrue(_data.ContainsKey(symbol), "Symbol " + symbol + " not present in Test Data");

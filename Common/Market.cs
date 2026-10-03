@@ -72,7 +72,14 @@ namespace QuantConnect
             Tuple.Create(EUREX, 40),
             Tuple.Create(OSE, 41),
             Tuple.Create(DYDX, 42),
-            Tuple.Create(KRX, 43)
+            Tuple.Create(KRX, 43),
+            Tuple.Create(EuronextParis, 44),
+            Tuple.Create(EuronextAmsterdam, 45),
+            Tuple.Create(EuronextBrussels, 46),
+            Tuple.Create(EuronextDublin, 47),
+            Tuple.Create(EuronextMilan, 48),
+            Tuple.Create(EuronextLisbon, 49),
+            Tuple.Create(EuronextOslo, 50)
         };
 
         static Market()
@@ -272,6 +279,41 @@ namespace QuantConnect
         /// Korea Exchange
         /// </summary>
         public const string KRX = "krx";
+
+        /// <summary>
+        /// Euronext Paris
+        /// </summary>
+        public const string EuronextParis = "euronextparis";
+
+        /// <summary>
+        /// Euronext Amsterdam
+        /// </summary>
+        public const string EuronextAmsterdam = "euronextamsterdam";
+
+        /// <summary>
+        /// Euronext Brussels
+        /// </summary>
+        public const string EuronextBrussels = "euronextbrussels";
+
+        /// <summary>
+        /// Euronext Dublin
+        /// </summary>
+        public const string EuronextDublin = "euronextdublin";
+
+        /// <summary>
+        /// Euronext Milan
+        /// </summary>
+        public const string EuronextMilan = "euronextmilan";
+
+        /// <summary>
+        /// Euronext Lisbon
+        /// </summary>
+        public const string EuronextLisbon = "euronextlisbon";
+
+        /// <summary>
+        /// Euronext Oslo
+        /// </summary>
+        public const string EuronextOslo = "euronextoslo";
 
         /// <summary>
         /// Adds the specified market to the map of available markets with the specified identifier.

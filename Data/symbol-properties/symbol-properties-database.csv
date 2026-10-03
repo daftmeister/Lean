@@ -421,6 +421,32 @@ ose,[*],index,,JPY,1,0.01,1
 krx,KM,future,KOSPI 200 Index Futures,KRW,250000,0.05,1.0
 krx,[*],index,,KRW,1,0.01,1
 
+euronextparis,FCE,future,CAC 40 Index Futures,EUR,10,0.5,1
+euronextparis,MFC,future,Mini CAC 40 Index Futures,EUR,1,0.5,1
+euronextparis,[*],equity,,EUR,1,0.001,1
+euronextparis,[*],index,,EUR,1,0.01,1
+
+euronextamsterdam,FTI,future,AEX Index Futures,EUR,200,0.05,1
+euronextamsterdam,[*],equity,,EUR,1,0.001,1
+euronextamsterdam,[*],index,,EUR,1,0.01,1
+
+euronextbrussels,BXF,future,BEL 20 Index Futures,EUR,10,0.5,1
+euronextbrussels,[*],equity,,EUR,1,0.001,1
+euronextbrussels,[*],index,,EUR,1,0.01,1
+
+euronextdublin,[*],equity,,EUR,1,0.001,1
+
+euronextmilan,FIB,future,FTSE MIB Index Futures,EUR,5,5,1
+euronextmilan,MINI,future,Mini FTSE MIB Index Futures,EUR,1,5,1
+euronextmilan,[*],equity,,EUR,1,0.001,1
+euronextmilan,[*],index,,EUR,1,0.01,1
+
+euronextlisbon,[*],equity,,EUR,1,0.001,1
+
+euronextoslo,OBF,future,OBX Index Futures,NOK,100,0.25,1
+euronextoslo,[*],equity,,NOK,1,0.001,1
+euronextoslo,[*],index,,NOK,1,0.01,1
+
 # Futures options -- will default to Futures contract specs in case no entry exists
 cbot,OZB,futureoption,U.S. Treasury Bond American Futures Options,USD,1000.0,0.015625,1.0
 cbot,OZC,futureoption,Corn American Futures Options,USD,5000.0,0.00125,1.0,,,100

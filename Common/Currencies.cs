@@ -77,6 +77,11 @@ namespace QuantConnect
         public const string KRW = "KRW";
 
         /// <summary>
+        /// NOK (Norwegian krone) currency string
+        /// </summary>
+        public const string NOK = "NOK";
+
+        /// <summary>
         /// Null currency used when a real one is not required
         /// </summary>
         public const string NullCurrency = "QCC";
@@ -109,7 +114,7 @@ namespace QuantConnect
             {"HUF", "Ft"},
             {"INR", "₹"},
             {"MXN", "$"},
-            {"NOK", "kr"},
+            {NOK, "kr"},
             {"PLN", "zł"},
             {"SAR", "﷼"},
             {"SEK", "kr"},

@@ -140,7 +140,11 @@ namespace QuantConnect.Securities.Index
             { "KM", Market.KRX },
             { "N225", Market.OSE },
             { "SX5E", Market.EUREX },
-            { "DAX", Market.EUREX }
+            { "DAX", Market.EUREX },
+            { "CAC40", Market.EuronextParis },
+            { "BEL20", Market.EuronextBrussels },
+            { "FTSEMIB", Market.EuronextMilan },
+            { "OBX", Market.EuronextOslo }
         };
 
         /// <summary>

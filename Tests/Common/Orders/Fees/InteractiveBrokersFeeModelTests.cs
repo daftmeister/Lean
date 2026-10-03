@@ -15,6 +15,7 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using QuantConnect.Data;
@@ -24,6 +25,7 @@ using QuantConnect.Orders.Fees;
 using QuantConnect.Securities;
 using QuantConnect.Securities.Cfd;
 using QuantConnect.Securities.Crypto;
+using QuantConnect.Securities.Equity;
 using QuantConnect.Securities.Forex;
 using QuantConnect.Securities.Future;
 using QuantConnect.Securities.FutureOption;
@@ -193,6 +195,71 @@ namespace QuantConnect.Tests.Common.Orders.Fees
             Assert.AreEqual(Currencies.KRW, fee.Value.Currency);
             // 0.004% of the trade value: 1046 * 250,000 contract multiplier
             Assert.AreEqual(10460m, fee.Value.Amount);
+        }
+
+        [TestCase(Futures.Indices.CAC40, Market.EuronextParis, 2.00)]
+        [TestCase(Futures.Indices.CAC40Mini, Market.EuronextParis, 0.40)]
+        [TestCase(Futures.Indices.AEX, Market.EuronextAmsterdam, 2.80)]
+        [TestCase(Futures.Indices.BEL20, Market.EuronextBrussels, 4.50)]
+        [TestCase(Futures.Indices.FTSEMIB, Market.EuronextMilan, 3.00)]
+        [TestCase(Futures.Indices.FTSEMIBMini, Market.EuronextMilan, 2.00)]
+        public void EuronextFutureFee(string ticker, string market, decimal expectedFeePerContract)
+        {
+            var symbol = Symbol.CreateFuture(ticker, market, new DateTime(2025, 6, 20));
+            var security = CreateSecurity(symbol, 8000m, contract => new Future(contract.Symbol, contract.ExchangeHours,
+                contract.QuoteCurrency, contract.Properties, ErrorCurrencyConverter.Instance, RegisteredSecurityDataTypesProvider.Null, new SecurityCache()));
+
+            var fee = _feeModel.GetOrderFee(new OrderFeeParameters(security, new MarketOrder(symbol, -3, new DateTime(2025, 6, 2))));
+
+            Assert.AreEqual(Currencies.EUR, fee.Value.Currency);
+            Assert.AreEqual(3 * expectedFeePerContract, fee.Value.Amount);
+        }
+
+        [Test]
+        public void EuronextOsloFuturesAreNotOfferedByInteractiveBrokers()
+        {
+            var symbol = Symbol.CreateFuture(Futures.Indices.OBX, Market.EuronextOslo, new DateTime(2025, 6, 20));
+            var security = CreateSecurity(symbol, 1500m, contract => new Future(contract.Symbol, contract.ExchangeHours,
+                contract.QuoteCurrency, contract.Properties, ErrorCurrencyConverter.Instance, RegisteredSecurityDataTypesProvider.Null, new SecurityCache()));
+
+            Assert.Throws<KeyNotFoundException>(() =>
+                _feeModel.GetOrderFee(new OrderFeeParameters(security, new MarketOrder(symbol, 1, new DateTime(2025, 6, 2)))));
+        }
+
+        // 0.05% of the trade value, minimum EUR 3
+        [TestCase("MC", Market.EuronextParis, 500, 100, Currencies.EUR, 25)]
+        [TestCase("MC", Market.EuronextParis, 500, 1, Currencies.EUR, 3)]
+        [TestCase("ASML", Market.EuronextAmsterdam, 600, 10, Currencies.EUR, 3)]
+        [TestCase("ABI", Market.EuronextBrussels, 50, 1000, Currencies.EUR, 25)]
+        [TestCase("RYA", Market.EuronextDublin, 20, 1000, Currencies.EUR, 10)]
+        [TestCase("ENEL", Market.EuronextMilan, 7, -10000, Currencies.EUR, 35)]
+        // 0.15% of the trade value, minimum EUR 6
+        [TestCase("EDP", Market.EuronextLisbon, 4, 10000, Currencies.EUR, 60)]
+        [TestCase("EDP", Market.EuronextLisbon, 4, 100, Currencies.EUR, 6)]
+        // 0.05% of the trade value, minimum NOK 49
+        [TestCase("EQNR", Market.EuronextOslo, 250, 1000, Currencies.NOK, 125)]
+        [TestCase("EQNR", Market.EuronextOslo, 250, 10, Currencies.NOK, 49)]
+        public void EuronextEquityFee(string ticker, string market, decimal price, decimal quantity, string expectedCurrency, decimal expectedFee)
+        {
+            var symbol = Symbol.Create(ticker, SecurityType.Equity, market);
+            var security = CreateSecurity(symbol, price, contract => new Equity(contract.Symbol, contract.ExchangeHours,
+                contract.QuoteCurrency, contract.Properties, ErrorCurrencyConverter.Instance, RegisteredSecurityDataTypesProvider.Null, new SecurityCache()));
+
+            var fee = _feeModel.GetOrderFee(new OrderFeeParameters(security, new MarketOrder(symbol, quantity, new DateTime(2025, 6, 2))));
+
+            Assert.AreEqual(expectedCurrency, fee.Value.Currency);
+            Assert.AreEqual(expectedFee, fee.Value.Amount);
+        }
+
+        private static Security CreateSecurity(Symbol symbol, decimal price,
+            Func<(Symbol Symbol, SecurityExchangeHours ExchangeHours, Cash QuoteCurrency, SymbolProperties Properties), Security> factory)
+        {
+            var entry = MarketHoursDatabase.FromDataFolder().GetEntry(symbol.ID.Market, symbol, symbol.SecurityType);
+            var properties = SymbolPropertiesDatabase.FromDataFolder()
+                .GetSymbolProperties(symbol.ID.Market, symbol, symbol.SecurityType, null);
+            var security = factory((symbol, entry.ExchangeHours, new Cash(properties.QuoteCurrency, 0, 1), properties));
+            security.SetMarketPrice(new Tick(new DateTime(2025, 6, 2), symbol, price, price));
+            return security;
         }
 
         [TestCase(OrderType.ComboMarket, 0.01, 250)]

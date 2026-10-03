@@ -275,6 +275,48 @@ namespace QuantConnect
             = new("EUREX", "EUREX", "European Derivatives Exchange", QuantConnect.Market.EUREX, SecurityType.Future, SecurityType.Index);
 
         /// <summary>
+        /// Euronext Paris
+        /// </summary>
+        public static Exchange EURONEXT_PARIS { get; }
+            = new("EURONEXT_PARIS", "XPAR", "Euronext Paris", QuantConnect.Market.EuronextParis, SecurityType.Equity, SecurityType.Future, SecurityType.Index);
+
+        /// <summary>
+        /// Euronext Amsterdam
+        /// </summary>
+        public static Exchange EURONEXT_AMSTERDAM { get; }
+            = new("EURONEXT_AMSTERDAM", "XAMS", "Euronext Amsterdam", QuantConnect.Market.EuronextAmsterdam, SecurityType.Equity, SecurityType.Future, SecurityType.Index);
+
+        /// <summary>
+        /// Euronext Brussels
+        /// </summary>
+        public static Exchange EURONEXT_BRUSSELS { get; }
+            = new("EURONEXT_BRUSSELS", "XBRU", "Euronext Brussels", QuantConnect.Market.EuronextBrussels, SecurityType.Equity, SecurityType.Future, SecurityType.Index);
+
+        /// <summary>
+        /// Euronext Dublin
+        /// </summary>
+        public static Exchange EURONEXT_DUBLIN { get; }
+            = new("EURONEXT_DUBLIN", "XMSM", "Euronext Dublin", QuantConnect.Market.EuronextDublin, SecurityType.Equity);
+
+        /// <summary>
+        /// Euronext Milan
+        /// </summary>
+        public static Exchange EURONEXT_MILAN { get; }
+            = new("EURONEXT_MILAN", "MTAA", "Euronext Milan", QuantConnect.Market.EuronextMilan, SecurityType.Equity, SecurityType.Future, SecurityType.Index);
+
+        /// <summary>
+        /// Euronext Lisbon
+        /// </summary>
+        public static Exchange EURONEXT_LISBON { get; }
+            = new("EURONEXT_LISBON", "XLIS", "Euronext Lisbon", QuantConnect.Market.EuronextLisbon, SecurityType.Equity);
+
+        /// <summary>
+        /// Euronext Oslo
+        /// </summary>
+        public static Exchange EURONEXT_OSLO { get; }
+            = new("EURONEXT_OSLO", "XOSL", "Euronext Oslo", QuantConnect.Market.EuronextOslo, SecurityType.Equity, SecurityType.Future, SecurityType.Index);
+
+        /// <summary>
 
         /// <summary>
         /// The Chicago Board of Trade (CBOT) is a commodity exchange

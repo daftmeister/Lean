@@ -155,6 +155,13 @@ namespace QuantConnect.Tests.Algorithm
         [TestCase("FESX", Market.EUREX, DataMappingMode.OpenInterestAnnual, DataMappingMode.LastTradingDay, true)]
         [TestCase("FESX", Market.EUREX, DataMappingMode.FirstDayMonth, DataMappingMode.FirstDayMonth, false)]
         [TestCase("ES", Market.CME, DataMappingMode.OpenInterest, DataMappingMode.OpenInterest, false)]
+        [TestCase("FCE", Market.EuronextParis, null, DataMappingMode.LastTradingDay, true)]
+        [TestCase("MFC", Market.EuronextParis, DataMappingMode.LastTradingDay, DataMappingMode.LastTradingDay, false)]
+        [TestCase("FTI", Market.EuronextAmsterdam, null, DataMappingMode.LastTradingDay, true)]
+        [TestCase("BXF", Market.EuronextBrussels, null, DataMappingMode.LastTradingDay, true)]
+        [TestCase("FIB", Market.EuronextMilan, DataMappingMode.OpenInterest, DataMappingMode.LastTradingDay, true)]
+        [TestCase("MINI", Market.EuronextMilan, null, DataMappingMode.LastTradingDay, true)]
+        [TestCase("OBF", Market.EuronextOslo, null, DataMappingMode.LastTradingDay, true)]
         public void AddFutureFallsBackFromUnavailableDataMappingMode(string ticker, string market, DataMappingMode? dataMappingMode,
             DataMappingMode expectedMode, bool expectWarning)
         {
@@ -178,6 +185,64 @@ namespace QuantConnect.Tests.Algorithm
             {
                 Assert.IsEmpty(warnings);
             }
+        }
+
+        [TestCase("MC", Market.EuronextParis, Currencies.EUR, "Europe/Paris")]
+        [TestCase("ASML", Market.EuronextAmsterdam, Currencies.EUR, "Europe/Amsterdam")]
+        [TestCase("ABI", Market.EuronextBrussels, Currencies.EUR, "Europe/Brussels")]
+        [TestCase("RYA", Market.EuronextDublin, Currencies.EUR, "Europe/Dublin")]
+        [TestCase("ENEL", Market.EuronextMilan, Currencies.EUR, "Europe/Rome")]
+        [TestCase("EDP", Market.EuronextLisbon, Currencies.EUR, "Europe/Lisbon")]
+        [TestCase("EQNR", Market.EuronextOslo, Currencies.NOK, "Europe/Oslo")]
+        public void AddEuronextEquity(string ticker, string market, string expectedQuoteCurrency, string expectedTimeZone)
+        {
+            var equity = _algo.AddEquity(ticker, Resolution.Minute, market);
+
+            Assert.AreEqual(market, equity.Symbol.ID.Market);
+            Assert.AreEqual(expectedQuoteCurrency, equity.QuoteCurrency.Symbol);
+            Assert.AreEqual(expectedTimeZone, equity.Exchange.TimeZone.Id);
+            Assert.IsFalse(equity.Exchange.Hours.IsOpen(new DateTime(2025, 4, 18, 12, 0, 0), extendedMarketHours: true), "Good Friday");
+            Assert.IsTrue(equity.Exchange.Hours.IsOpen(new DateTime(2025, 4, 16, 12, 0, 0), extendedMarketHours: false));
+        }
+
+        [TestCase(Futures.Indices.CAC40, Market.EuronextParis, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.CAC40Mini, Market.EuronextParis, Currencies.EUR, 1)]
+        [TestCase(Futures.Indices.AEX, Market.EuronextAmsterdam, Currencies.EUR, 200)]
+        [TestCase(Futures.Indices.BEL20, Market.EuronextBrussels, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.FTSEMIB, Market.EuronextMilan, Currencies.EUR, 5)]
+        [TestCase(Futures.Indices.FTSEMIBMini, Market.EuronextMilan, Currencies.EUR, 1)]
+        [TestCase(Futures.Indices.OBX, Market.EuronextOslo, Currencies.NOK, 100)]
+        public void AddEuronextFuture(string ticker, string market, string expectedQuoteCurrency, decimal expectedMultiplier)
+        {
+            var future = _algo.AddFuture(ticker, Resolution.Minute, market);
+
+            Assert.AreEqual(expectedQuoteCurrency, future.QuoteCurrency.Symbol);
+            Assert.AreEqual(expectedMultiplier, future.SymbolProperties.ContractMultiplier);
+            Assert.IsTrue(FuturesExpiryFunctions.FuturesExpiryDictionary.ContainsKey(future.Symbol.Canonical));
+        }
+
+        [TestCase("CAC40", Market.EuronextParis, Currencies.EUR)]
+        [TestCase("BEL20", Market.EuronextBrussels, Currencies.EUR)]
+        [TestCase("FTSEMIB", Market.EuronextMilan, Currencies.EUR)]
+        [TestCase("OBX", Market.EuronextOslo, Currencies.NOK)]
+        public void AddEuronextIndexResolvesMarket(string ticker, string expectedMarket, string expectedQuoteCurrency)
+        {
+            var index = _algo.AddIndex(ticker, Resolution.Minute);
+
+            Assert.AreEqual(expectedMarket, index.Symbol.ID.Market);
+            Assert.AreEqual(expectedQuoteCurrency, index.QuoteCurrency.Symbol);
+        }
+
+        [Test]
+        public void AddAEXIndexKeepsLegacyDefaultMarket()
+        {
+            // AEX already had a USA market entry, the Euronext Amsterdam index has to be requested explicitly
+            Assert.AreEqual(Market.USA, _algo.AddIndex("AEX", Resolution.Minute).Symbol.ID.Market);
+
+            var index = _algo.AddIndex("AEX", Resolution.Minute, Market.EuronextAmsterdam);
+            Assert.AreEqual(Market.EuronextAmsterdam, index.Symbol.ID.Market);
+            Assert.AreEqual(Currencies.EUR, index.QuoteCurrency.Symbol);
+            Assert.AreEqual("Europe/Amsterdam", index.Exchange.TimeZone.Id);
         }
 
         [Test]

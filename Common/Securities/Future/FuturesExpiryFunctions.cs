@@ -225,6 +225,35 @@ namespace QuantConnect.Securities.Future
             {Symbol.Create(Futures.Indices.TecDAX, SecurityType.Future, Market.EUREX),
                 GetDAXFuturesExpiry(Market.EUREX, Futures.Indices.TecDAX)
             },
+            // CAC 40 (FCE): https://live.euronext.com/en/product/index-futures/FCE-DPAR/contract-specification
+            {Symbol.Create(Futures.Indices.CAC40, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.CAC40, quarterlyOnly: false, new TimeSpan(16, 0, 0))
+            },
+            // Mini CAC 40 (MFC): https://live.euronext.com/en/product/index-futures/MFC-DPAR/contract-specification
+            {Symbol.Create(Futures.Indices.CAC40Mini, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.CAC40Mini, quarterlyOnly: false, new TimeSpan(16, 0, 0))
+            },
+            // AEX (FTI): https://live.euronext.com/en/product/index-futures/FTI-DAMS/contract-specification
+            {Symbol.Create(Futures.Indices.AEX, SecurityType.Future, Market.EuronextAmsterdam),
+                GetEuronextIndexFuturesExpiry(Market.EuronextAmsterdam, Futures.Indices.AEX, quarterlyOnly: false, new TimeSpan(16, 0, 0))
+            },
+            // BEL 20 (BXF): https://live.euronext.com/en/product/index-futures/BXF-DBRU/contract-specification
+            {Symbol.Create(Futures.Indices.BEL20, SecurityType.Future, Market.EuronextBrussels),
+                GetEuronextIndexFuturesExpiry(Market.EuronextBrussels, Futures.Indices.BEL20, quarterlyOnly: false, new TimeSpan(16, 0, 0))
+            },
+            // FTSE MIB (FIB): https://borsaitaliana.it/derivati/specifichecontrattuali/fib.en.htm
+            // Trading terminates at 09:05 on expiry, it settles on the index value from the constituents' opening auction prices
+            {Symbol.Create(Futures.Indices.FTSEMIB, SecurityType.Future, Market.EuronextMilan),
+                GetEuronextIndexFuturesExpiry(Market.EuronextMilan, Futures.Indices.FTSEMIB, quarterlyOnly: true, new TimeSpan(9, 5, 0))
+            },
+            // Mini FTSE MIB (MINI): https://www.borsaitaliana.it/derivati/specifichecontrattuali/minifib.en.htm
+            {Symbol.Create(Futures.Indices.FTSEMIBMini, SecurityType.Future, Market.EuronextMilan),
+                GetEuronextIndexFuturesExpiry(Market.EuronextMilan, Futures.Indices.FTSEMIBMini, quarterlyOnly: true, new TimeSpan(9, 5, 0))
+            },
+            // OBX (OBF): https://live.euronext.com/en/product/index-futures/OBF-DOSL/contract-specification
+            {Symbol.Create(Futures.Indices.OBX, SecurityType.Future, Market.EuronextOslo),
+                GetEuronextIndexFuturesExpiry(Market.EuronextOslo, Futures.Indices.OBX, quarterlyOnly: false, new TimeSpan(16, 20, 0))
+            },
             // NASDAQ100EMini (NQ): http://www.cmegroup.com/trading/equity-index/us-index/e-mini-nasdaq-100_contract_specifications.html
             {Symbol.Create(Futures.Indices.NASDAQ100EMini, SecurityType.Future, Market.CME), (time =>
                 {
@@ -3633,6 +3662,25 @@ namespace QuantConnect.Securities.Future
                 lastTradingDay = FuturesExpiryUtilityFunctions.AddBusinessDaysIfHoliday(lastTradingDay, -1, holidays);
 
                 return lastTradingDay.Add(new TimeSpan(13, 0, 0));
+            };
+        }
+
+        private static Func<DateTime, DateTime> GetEuronextIndexFuturesExpiry(string market, string symbol, bool quarterlyOnly, TimeSpan lastTradingTime)
+        {
+            return time =>
+            {
+                // Monthly contracts are listed for every month, quarterly ones only for Mar/3, Jun/6, Sep/9, Dec/12
+                while (quarterlyOnly && !FutureExpirationCycles.HMUZ.Contains(time.Month))
+                {
+                    time = time.AddMonths(1);
+                }
+
+                // Trading terminates on the 3rd Friday of the contract month, or the preceding business day if it's a holiday
+                var lastTradingDay = FuturesExpiryUtilityFunctions.ThirdFriday(time);
+                var holidays = FuturesExpiryUtilityFunctions.GetExpirationHolidays(market, symbol);
+                lastTradingDay = FuturesExpiryUtilityFunctions.AddBusinessDaysIfHoliday(lastTradingDay, -1, holidays);
+
+                return lastTradingDay.Add(lastTradingTime);
             };
         }
     }

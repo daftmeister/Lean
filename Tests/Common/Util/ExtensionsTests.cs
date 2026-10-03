@@ -70,6 +70,12 @@ namespace QuantConnect.Tests.Common.Util
         [TestCase(Market.KRX, DataMappingMode.OpenInterest, DataMappingMode.LastTradingDay)]
         [TestCase(Market.KRX, DataMappingMode.OpenInterestAnnual, DataMappingMode.LastTradingDay)]
         [TestCase(Market.KRX, DataMappingMode.FirstDayMonth, DataMappingMode.FirstDayMonth)]
+        [TestCase(Market.EuronextParis, DataMappingMode.OpenInterest, DataMappingMode.LastTradingDay)]
+        [TestCase(Market.EuronextAmsterdam, DataMappingMode.OpenInterest, DataMappingMode.LastTradingDay)]
+        [TestCase(Market.EuronextBrussels, DataMappingMode.OpenInterest, DataMappingMode.LastTradingDay)]
+        [TestCase(Market.EuronextMilan, DataMappingMode.OpenInterestAnnual, DataMappingMode.LastTradingDay)]
+        [TestCase(Market.EuronextOslo, DataMappingMode.OpenInterest, DataMappingMode.LastTradingDay)]
+        [TestCase(Market.EuronextParis, DataMappingMode.FirstDayMonth, DataMappingMode.FirstDayMonth)]
         public void GetUniverseMappingModeOrDefault(string market, DataMappingMode settingsMode, DataMappingMode expected)
         {
             var settings = new UniverseSettings(Resolution.Daily, 1, true, false, TimeSpan.Zero) { DataMappingMode = settingsMode };

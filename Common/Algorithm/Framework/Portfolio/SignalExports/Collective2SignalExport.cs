@@ -425,6 +425,16 @@ namespace QuantConnect.Algorithm.Framework.Portfolio.SignalExports
                     return "XNYM";
                 case Market.SGX:
                     return "XSES";
+                case Market.EuronextParis:
+                    return "XMON";
+                case Market.EuronextAmsterdam:
+                    return "XEUE";
+                case Market.EuronextBrussels:
+                    return "XBRD";
+                case Market.EuronextMilan:
+                    return "XDMI";
+                case Market.EuronextOslo:
+                    return "XOBD";
                 case Market.FXCM:
                     return symbol.ID.Market.ToUpper();
                 case Market.OSE:

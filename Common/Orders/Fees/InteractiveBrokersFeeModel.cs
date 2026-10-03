@@ -44,7 +44,11 @@ namespace QuantConnect.Orders.Fees
                 { Market.USA, UnitedStatesFutureFees },
                 { Market.HKFE, HongKongFutureFees },
                 { Market.EUREX, EUREXFutureFees },
-                { Market.KRX, KoreaFutureFees }
+                { Market.KRX, KoreaFutureFees },
+                { Market.EuronextParis, EuronextFutureFees },
+                { Market.EuronextAmsterdam, EuronextFutureFees },
+                { Market.EuronextBrussels, EuronextFutureFees },
+                { Market.EuronextMilan, EuronextFutureFees }
             };
 
         /// <summary>
@@ -143,6 +147,15 @@ namespace QuantConnect.Orders.Fees
                     break;
 
                 case SecurityType.Equity:
+                    if (_euronextEquityFees.TryGetValue(market, out var euronextEquityFee))
+                    {
+                        // European stocks are charged a percentage of the trade value, subject to a minimum per order
+                        var euronextTradeValue = Math.Abs(order.GetValue(security));
+                        feeResult = Math.Max(euronextEquityFee.Minimum, euronextEquityFee.Rate * euronextTradeValue);
+                        feeCurrency = euronextEquityFee.Currency;
+                        break;
+                    }
+
                     EquityFee equityFee;
                     switch (market)
                     {
@@ -395,6 +408,18 @@ namespace QuantConnect.Orders.Fees
             return new CashAmount(_koreaFutureFeeRate * tradeValuePerContract, security.QuoteCurrency.Symbol);
         }
 
+        /// <summary>
+        /// Gets the fee for a single Euronext index future contract (IB fee + exchange fee) in the contract quote currency
+        /// </summary>
+        private static CashAmount EuronextFutureFees(Security security)
+        {
+            if (!_euronextFuturesFees.TryGetValue(security.Symbol.ID.Symbol, out var feePerContract))
+            {
+                throw new KeyNotFoundException(Messages.InteractiveBrokersFeeModel.UnexpectedFutureMarket(security.Symbol.ID.Market));
+            }
+            return new CashAmount(feePerContract, security.QuoteCurrency.Symbol);
+        }
+
         private static CashAmount EUREXFutureFees(Security security)
         {
             IDictionary<string, decimal> fees, exchangeFees;
@@ -450,6 +475,37 @@ namespace QuantConnect.Orders.Fees
         {
             // Futures
             { "FESX", 1.00m },
+        };
+
+        /// <summary>
+        /// Fixed pricing per contract, which includes the exchange and clearing fees, in the contract quote currency.
+        /// Euronext Oslo futures are not offered by Interactive Brokers.
+        /// Reference at https://www.interactivebrokers.com/en/pricing/commissions-futures-europe.php?re=europe
+        /// </summary>
+        private static readonly Dictionary<string, decimal> _euronextFuturesFees = new()
+        {
+            { Futures.Indices.CAC40, 2.00m },
+            { Futures.Indices.CAC40Mini, 0.40m },
+            { Futures.Indices.AEX, 2.80m },
+            { Futures.Indices.BEL20, 4.50m },
+            { Futures.Indices.FTSEMIB, 3.00m },
+            { Futures.Indices.FTSEMIBMini, 2.00m },
+        };
+
+        /// <summary>
+        /// Fixed pricing for European stocks: a rate of the trade value, subject to a minimum per order,
+        /// which includes the exchange and clearing fees.
+        /// Reference at https://www.interactivebrokers.com/en/pricing/commissions-stocks-europe.php
+        /// </summary>
+        private static readonly Dictionary<string, (string Currency, decimal Rate, decimal Minimum)> _euronextEquityFees = new()
+        {
+            { Market.EuronextParis, (Currencies.EUR, 0.0005m, 3m) },
+            { Market.EuronextAmsterdam, (Currencies.EUR, 0.0005m, 3m) },
+            { Market.EuronextBrussels, (Currencies.EUR, 0.0005m, 3m) },
+            { Market.EuronextDublin, (Currencies.EUR, 0.0005m, 3m) },
+            { Market.EuronextMilan, (Currencies.EUR, 0.0005m, 3m) },
+            { Market.EuronextLisbon, (Currencies.EUR, 0.0015m, 6m) },
+            { Market.EuronextOslo, (Currencies.NOK, 0.0005m, 49m) },
         };
 
         private static readonly Dictionary<string, decimal> _usaFutureOptionsFees = new()
