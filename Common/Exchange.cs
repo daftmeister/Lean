@@ -308,7 +308,7 @@ namespace QuantConnect
         /// Euronext Lisbon
         /// </summary>
         public static Exchange EURONEXT_LISBON { get; }
-            = new("EURONEXT_LISBON", "XLIS", "Euronext Lisbon", QuantConnect.Market.EuronextLisbon, SecurityType.Equity);
+            = new("EURONEXT_LISBON", "XLIS", "Euronext Lisbon", QuantConnect.Market.EuronextLisbon, SecurityType.Equity, SecurityType.Future, SecurityType.Index);
 
         /// <summary>
         /// Euronext Oslo
