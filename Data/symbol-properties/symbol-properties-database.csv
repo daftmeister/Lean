@@ -423,10 +423,19 @@ krx,[*],index,,KRW,1,0.01,1
 
 euronextparis,FCE,future,CAC 40 Index Futures,EUR,10,0.5,1
 euronextparis,MFC,future,Mini CAC 40 Index Futures,EUR,1,0.5,1
+euronextparis,FCG,future,CAC 40 ESG Index Futures,EUR,10,1,1
+euronextparis,XFC,future,CAC 40 Dividend Index Futures,EUR,10,0.1,1
+euronextparis,EBF,future,Euronext Eurozone Banks Index Futures,EUR,50,0.25,1
+euronextparis,ESG,future,Euronext Eurozone ESG Large 80 Index Futures,EUR,10,0.5,1
+euronextparis,EPE,future,FTSE EPRA Nareit Eurozone Index Futures,EUR,10,0.5,1
+euronextparis,EPR,future,FTSE EPRA Nareit Europe Index Futures,EUR,10,0.5,1
+euronextparis,FEO,future,FTSE Eurofirst 100 Index Futures,EUR,10,0.5,1
+euronextparis,ISE,future,ISEQ 20 Index Futures,EUR,1,1,1
 euronextparis,[*],equity,,EUR,1,0.001,1
 euronextparis,[*],index,,EUR,1,0.01,1
 
 euronextamsterdam,FTI,future,AEX Index Futures,EUR,200,0.05,1
+euronextamsterdam,FMX,future,AMX Index Futures,EUR,50,0.1,1
 euronextamsterdam,[*],equity,,EUR,1,0.001,1
 euronextamsterdam,[*],index,,EUR,1,0.01,1
 
@@ -442,6 +451,7 @@ euronextmilan,[*],equity,,EUR,1,0.001,1
 euronextmilan,[*],index,,EUR,1,0.01,1
 
 euronextlisbon,[*],equity,,EUR,1,0.001,1
+euronextlisbon,PSI,future,PSI 20 Index Futures,EUR,1,1,1
 
 euronextoslo,OBF,future,OBX Index Futures,NOK,100,0.25,1
 euronextoslo,[*],equity,,NOK,1,0.001,1

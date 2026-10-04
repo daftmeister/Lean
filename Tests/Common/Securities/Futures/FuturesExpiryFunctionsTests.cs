@@ -134,6 +134,17 @@ namespace QuantConnect.Tests.Common.Securities.Futures
         // 5/17/2024 (Constitution Day) is the 3rd Friday and a holiday in Oslo, 4/17/2025 (Maundy Thursday) as well
         [TestCase(QuantConnect.Securities.Futures.Indices.OBX, Market.EuronextOslo, "20240501", "20240516 16:20")]
         [TestCase(QuantConnect.Securities.Futures.Indices.OBX, Market.EuronextOslo, "20250401", "20250416 16:20")]
+        // CAC 40 Dividend lists Decembers only; EBF, ESG, the FTSE indices, ISEQ 20 and PSI 20 are quarterly
+        [TestCase(QuantConnect.Securities.Futures.Indices.CAC40ESG, Market.EuronextParis, "20250101", "20250117 16:00")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.CAC40Dividend, Market.EuronextParis, "20250101", "20251219 13:00")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.EurozoneBanks, Market.EuronextParis, "20250101", "20250321 12:00")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.EurozoneESGLarge80, Market.EuronextParis, "20250401", "20250620 16:00")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.FTSEEPRANareitEurozone, Market.EuronextParis, "20250301", "20250321 17:45")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.FTSEEPRANareitEurope, Market.EuronextParis, "20250301", "20250321 17:45")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.FTSEEurofirst100, Market.EuronextParis, "20251101", "20251219 17:45")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.ISEQ20, Market.EuronextParis, "20250101", "20250321 17:40")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.AMX, Market.EuronextAmsterdam, "20250401", "20250417 17:00")]
+        [TestCase(QuantConnect.Securities.Futures.Indices.PSI20, Market.EuronextLisbon, "20250101", "20250321 16:40")]
         public void EuronextIndexFutures(string ticker, string market, string input, string expectedStr)
         {
             var canonical = Symbol.Create(ticker, SecurityType.Future, market);

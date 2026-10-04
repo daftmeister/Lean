@@ -241,6 +241,51 @@ namespace QuantConnect.Securities.Future
             {Symbol.Create(Futures.Indices.BEL20, SecurityType.Future, Market.EuronextBrussels),
                 GetEuronextIndexFuturesExpiry(Market.EuronextBrussels, Futures.Indices.BEL20, quarterlyOnly: false, new TimeSpan(16, 0, 0))
             },
+            // CAC 40 ESG (FCG): https://live.euronext.com/en/product/index-futures/FCG-DPAR/contract-specification
+            {Symbol.Create(Futures.Indices.CAC40ESG, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.CAC40ESG, quarterlyOnly: false, new TimeSpan(16, 0, 0))
+            },
+            // CAC 40 Dividend (XFC): https://live.euronext.com/en/product/dividend-index-futures/XFC-DPAR/contract-specification
+            // December contracts only; trading terminates at 13:00 on the 3rd Friday of December
+            {Symbol.Create(Futures.Indices.CAC40Dividend, SecurityType.Future, Market.EuronextParis),
+                GetEuronextDecemberFuturesExpiry(Market.EuronextParis, Futures.Indices.CAC40Dividend, new TimeSpan(13, 0, 0))
+            },
+            // Euronext Eurozone Banks (EBF): https://live.euronext.com/en/product/index-futures/EBF-DPAR/contract-specification
+            // Trading terminates at 12:00 on the expiry day
+            {Symbol.Create(Futures.Indices.EurozoneBanks, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.EurozoneBanks, quarterlyOnly: true, new TimeSpan(12, 0, 0))
+            },
+            // Euronext Eurozone ESG Large 80 (ESG): https://live.euronext.com/en/product/index-futures/ESG-DPAR/contract-specification
+            {Symbol.Create(Futures.Indices.EurozoneESGLarge80, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.EurozoneESGLarge80, quarterlyOnly: true, new TimeSpan(16, 0, 0))
+            },
+            // FTSE EPRA Nareit Eurozone (EPE): https://live.euronext.com/en/product/index-futures/EPE-DPAR/contract-specification
+            // Settles on the FTSE official closing value; trading terminates at 17:45
+            {Symbol.Create(Futures.Indices.FTSEEPRANareitEurozone, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.FTSEEPRANareitEurozone, quarterlyOnly: true, new TimeSpan(17, 45, 0))
+            },
+            // FTSE EPRA Nareit Europe (EPR): https://live.euronext.com/en/product/index-futures/EPR-DPAR/contract-specification
+            {Symbol.Create(Futures.Indices.FTSEEPRANareitEurope, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.FTSEEPRANareitEurope, quarterlyOnly: true, new TimeSpan(17, 45, 0))
+            },
+            // FTSE Eurofirst 100 (FEO): https://live.euronext.com/en/product/index-futures/FEO-DPAR/contract-specification
+            {Symbol.Create(Futures.Indices.FTSEEurofirst100, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.FTSEEurofirst100, quarterlyOnly: true, new TimeSpan(17, 45, 0))
+            },
+            // ISEQ 20 (ISE), listed on the Paris derivatives market: https://live.euronext.com/en/product/index-futures/ISE-DPAR/contract-specification
+            {Symbol.Create(Futures.Indices.ISEQ20, SecurityType.Future, Market.EuronextParis),
+                GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.ISEQ20, quarterlyOnly: true, new TimeSpan(17, 40, 0))
+            },
+            // AMX (FMX): https://live.euronext.com/en/product/index-futures/FMX-DAMS/contract-specification
+            // Settles on the average AMX value from 16:30 to 17:00
+            {Symbol.Create(Futures.Indices.AMX, SecurityType.Future, Market.EuronextAmsterdam),
+                GetEuronextIndexFuturesExpiry(Market.EuronextAmsterdam, Futures.Indices.AMX, quarterlyOnly: false, new TimeSpan(17, 0, 0))
+            },
+            // PSI 20 (PSI): https://live.euronext.com/en/product/index-futures/PSI-DLIS/contract-specification
+            // Trading terminates at 16:40 Lisbon time
+            {Symbol.Create(Futures.Indices.PSI20, SecurityType.Future, Market.EuronextLisbon),
+                GetEuronextIndexFuturesExpiry(Market.EuronextLisbon, Futures.Indices.PSI20, quarterlyOnly: true, new TimeSpan(16, 40, 0))
+            },
             // FTSE MIB (FIB): https://borsaitaliana.it/derivati/specifichecontrattuali/fib.en.htm
             // Trading terminates at 09:05 on expiry, it settles on the index value from the constituents' opening auction prices
             {Symbol.Create(Futures.Indices.FTSEMIB, SecurityType.Future, Market.EuronextMilan),
@@ -3662,6 +3707,24 @@ namespace QuantConnect.Securities.Future
                 lastTradingDay = FuturesExpiryUtilityFunctions.AddBusinessDaysIfHoliday(lastTradingDay, -1, holidays);
 
                 return lastTradingDay.Add(new TimeSpan(13, 0, 0));
+            };
+        }
+
+        private static Func<DateTime, DateTime> GetEuronextDecemberFuturesExpiry(string market, string symbol, TimeSpan lastTradingTime)
+        {
+            return time =>
+            {
+                // Only December contracts are listed
+                while (time.Month != 12)
+                {
+                    time = time.AddMonths(1);
+                }
+
+                var lastTradingDay = FuturesExpiryUtilityFunctions.ThirdFriday(time);
+                var holidays = FuturesExpiryUtilityFunctions.GetExpirationHolidays(market, symbol);
+                lastTradingDay = FuturesExpiryUtilityFunctions.AddBusinessDaysIfHoliday(lastTradingDay, -1, holidays);
+
+                return lastTradingDay.Add(lastTradingTime);
             };
         }
 

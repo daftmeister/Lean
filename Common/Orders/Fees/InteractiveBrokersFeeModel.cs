@@ -48,7 +48,8 @@ namespace QuantConnect.Orders.Fees
                 { Market.EuronextParis, EuronextFutureFees },
                 { Market.EuronextAmsterdam, EuronextFutureFees },
                 { Market.EuronextBrussels, EuronextFutureFees },
-                { Market.EuronextMilan, EuronextFutureFees }
+                { Market.EuronextMilan, EuronextFutureFees },
+                { Market.EuronextLisbon, EuronextFutureFees }
             };
 
         /// <summary>
@@ -415,7 +416,9 @@ namespace QuantConnect.Orders.Fees
         {
             if (!_euronextFuturesFees.TryGetValue(security.Symbol.ID.Symbol, out var feePerContract))
             {
-                throw new KeyNotFoundException(Messages.InteractiveBrokersFeeModel.UnexpectedFutureMarket(security.Symbol.ID.Market));
+                // Index futures without a published rate here (CAC 40 ESG and Dividend, the Eurozone, FTSE, AMX,
+                // ISEQ 20 and PSI 20 futures) are charged the CAC 40 rate as an estimate
+                feePerContract = _euronextFuturesFees[Futures.Indices.CAC40];
             }
             return new CashAmount(feePerContract, security.QuoteCurrency.Symbol);
         }

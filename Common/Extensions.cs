@@ -3981,6 +3981,7 @@ namespace QuantConnect
             Market.EuronextAmsterdam,
             Market.EuronextBrussels,
             Market.EuronextMilan,
+            Market.EuronextLisbon,
             Market.EuronextOslo
         };
 

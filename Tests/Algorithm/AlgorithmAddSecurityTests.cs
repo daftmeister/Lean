@@ -162,6 +162,7 @@ namespace QuantConnect.Tests.Algorithm
         [TestCase("FIB", Market.EuronextMilan, DataMappingMode.OpenInterest, DataMappingMode.LastTradingDay, true)]
         [TestCase("MINI", Market.EuronextMilan, null, DataMappingMode.LastTradingDay, true)]
         [TestCase("OBF", Market.EuronextOslo, null, DataMappingMode.LastTradingDay, true)]
+        [TestCase("PSI", Market.EuronextLisbon, null, DataMappingMode.LastTradingDay, true)]
         public void AddFutureFallsBackFromUnavailableDataMappingMode(string ticker, string market, DataMappingMode? dataMappingMode,
             DataMappingMode expectedMode, bool expectWarning)
         {
@@ -234,6 +235,16 @@ namespace QuantConnect.Tests.Algorithm
         [TestCase(Futures.Indices.FTSEMIB, Market.EuronextMilan, Currencies.EUR, 5)]
         [TestCase(Futures.Indices.FTSEMIBMini, Market.EuronextMilan, Currencies.EUR, 1)]
         [TestCase(Futures.Indices.OBX, Market.EuronextOslo, Currencies.NOK, 100)]
+        [TestCase(Futures.Indices.CAC40ESG, Market.EuronextParis, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.CAC40Dividend, Market.EuronextParis, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.EurozoneBanks, Market.EuronextParis, Currencies.EUR, 50)]
+        [TestCase(Futures.Indices.EurozoneESGLarge80, Market.EuronextParis, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.FTSEEPRANareitEurozone, Market.EuronextParis, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.FTSEEPRANareitEurope, Market.EuronextParis, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.FTSEEurofirst100, Market.EuronextParis, Currencies.EUR, 10)]
+        [TestCase(Futures.Indices.ISEQ20, Market.EuronextParis, Currencies.EUR, 1)]
+        [TestCase(Futures.Indices.AMX, Market.EuronextAmsterdam, Currencies.EUR, 50)]
+        [TestCase(Futures.Indices.PSI20, Market.EuronextLisbon, Currencies.EUR, 1)]
         public void AddEuronextFuture(string ticker, string market, string expectedQuoteCurrency, decimal expectedMultiplier)
         {
             var future = _algo.AddFuture(ticker, Resolution.Minute, market);

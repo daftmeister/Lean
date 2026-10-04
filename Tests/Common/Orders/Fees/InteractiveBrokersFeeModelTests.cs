@@ -203,6 +203,8 @@ namespace QuantConnect.Tests.Common.Orders.Fees
         [TestCase(Futures.Indices.BEL20, Market.EuronextBrussels, 4.50)]
         [TestCase(Futures.Indices.FTSEMIB, Market.EuronextMilan, 3.00)]
         [TestCase(Futures.Indices.FTSEMIBMini, Market.EuronextMilan, 2.00)]
+        [TestCase(Futures.Indices.CAC40Dividend, Market.EuronextParis, 2.00)]
+        [TestCase(Futures.Indices.PSI20, Market.EuronextLisbon, 2.00)]
         public void EuronextFutureFee(string ticker, string market, decimal expectedFeePerContract)
         {
             var symbol = Symbol.CreateFuture(ticker, market, new DateTime(2025, 6, 20));

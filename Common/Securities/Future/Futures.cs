@@ -1592,6 +1592,66 @@ namespace QuantConnect.Securities
             public const string BEL20 = "BXF";
 
             /// <summary>
+            /// CAC 40 ESG Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string CAC40ESG = "FCG";
+
+            /// <summary>
+            /// CAC 40 Dividend Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string CAC40Dividend = "XFC";
+
+            /// <summary>
+            /// Euronext Eurozone Banks Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string EurozoneBanks = "EBF";
+
+            /// <summary>
+            /// Euronext Eurozone ESG Large 80 Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string EurozoneESGLarge80 = "ESG";
+
+            /// <summary>
+            /// AMX (AEX Midcap) Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string AMX = "FMX";
+
+            /// <summary>
+            /// FTSE EPRA Nareit Eurozone Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string FTSEEPRANareitEurozone = "EPE";
+
+            /// <summary>
+            /// FTSE EPRA Nareit Europe Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string FTSEEPRANareitEurope = "EPR";
+
+            /// <summary>
+            /// FTSE Eurofirst 100 Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string FTSEEurofirst100 = "FEO";
+
+            /// <summary>
+            /// ISEQ 20 Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string ISEQ20 = "ISE";
+
+            /// <summary>
+            /// PSI 20 Index Futures
+            /// </summary>
+            /// <returns>The symbol</returns>
+            public const string PSI20 = "PSI";
+
+            /// <summary>
             /// FTSE MIB Index Futures
             /// </summary>
             /// <returns>The symbol</returns>
