@@ -205,6 +205,28 @@ namespace QuantConnect.Tests.Algorithm
             Assert.IsTrue(equity.Exchange.Hours.IsOpen(new DateTime(2025, 4, 16, 12, 0, 0), extendedMarketHours: false));
         }
 
+        [Test]
+        public void EuronextParisExchangeHours()
+        {
+            var hours = _algo.AddEquity("MC", Resolution.Minute, Market.EuronextParis).Exchange.Hours;
+
+            // Paris closures before the harmonised Euronext calendar
+            foreach (var holiday in new[] { new DateTime(2000, 6, 12), new DateTime(2000, 7, 14), new DateTime(2001, 6, 4), new DateTime(2001, 12, 31) })
+            {
+                Assert.IsFalse(hours.IsDateOpen(holiday), holiday.ToString("d", System.Globalization.CultureInfo.InvariantCulture));
+            }
+
+            // the market session includes the closing auction, the trading at last phase is extended hours
+            var monday = new DateTime(2025, 6, 2);
+            Assert.AreEqual(monday.AddHours(17).AddMinutes(35), hours.GetNextMarketClose(monday.AddHours(12), extendedMarketHours: false));
+            Assert.IsTrue(hours.IsOpen(monday.AddHours(17).AddMinutes(37), extendedMarketHours: true));
+            Assert.IsFalse(hours.IsOpen(monday.AddHours(17).AddMinutes(37), extendedMarketHours: false));
+
+            // half day: the market closes with the 14:00 closing auction
+            var christmasEve = new DateTime(2025, 12, 24);
+            Assert.AreEqual(christmasEve.AddHours(14), hours.GetNextMarketClose(christmasEve.AddHours(12), extendedMarketHours: false));
+        }
+
         [TestCase(Futures.Indices.CAC40, Market.EuronextParis, Currencies.EUR, 10)]
         [TestCase(Futures.Indices.CAC40Mini, Market.EuronextParis, Currencies.EUR, 1)]
         [TestCase(Futures.Indices.AEX, Market.EuronextAmsterdam, Currencies.EUR, 200)]
