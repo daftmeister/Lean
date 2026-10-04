@@ -228,6 +228,41 @@ namespace QuantConnect.Tests.Algorithm
             Assert.AreEqual(christmasEve.AddHours(14), hours.GetNextMarketClose(christmasEve.AddHours(12), extendedMarketHours: false));
         }
 
+        // Holidays beyond the published calendars follow each venue's rules: Good Friday 2029 everywhere,
+        // the first Monday of May in Dublin, Constitution Day and Whit Monday in Oslo, Assumption in Milan
+        [TestCase("MC", Market.EuronextParis, "2029-03-30")]
+        [TestCase("ASML", Market.EuronextAmsterdam, "2030-04-22")]
+        [TestCase("ABI", Market.EuronextBrussels, "2028-12-26")]
+        [TestCase("EDP", Market.EuronextLisbon, "2029-05-01")]
+        [TestCase("RYA", Market.EuronextDublin, "2029-05-07")]
+        [TestCase("ENEL", Market.EuronextMilan, "2028-08-15")]
+        [TestCase("EQNR", Market.EuronextOslo, "2029-05-17")]
+        [TestCase("EQNR", Market.EuronextOslo, "2030-06-10")]
+        public void EuronextHolidaysAfterThePublishedCalendars(string ticker, string market, string holiday)
+        {
+            var hours = _algo.AddEquity(ticker, Resolution.Minute, market).Exchange.Hours;
+            var date = DateTime.ParseExact(holiday, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+
+            Assert.IsFalse(hours.IsDateOpen(date), holiday);
+            Assert.IsTrue(hours.IsDateOpen(date.AddDays(date.DayOfWeek == DayOfWeek.Friday ? -1 : 1)));
+        }
+
+        [Test]
+        public void EuronextEarlyClosesAfterThePublishedCalendars()
+        {
+            var paris = _algo.AddEquity("MC", Resolution.Minute, Market.EuronextParis).Exchange.Hours;
+            var christmasEve = new DateTime(2029, 12, 24);
+            Assert.AreEqual(christmasEve.AddHours(14), paris.GetNextMarketClose(christmasEve.AddHours(12), extendedMarketHours: false));
+        }
+
+        [Test]
+        public void BEL20FuturesTradeUntil1740()
+        {
+            var hours = _algo.AddFuture(Futures.Indices.BEL20, Resolution.Minute, Market.EuronextBrussels).Exchange.Hours;
+            var monday = new DateTime(2025, 6, 2);
+            Assert.AreEqual(monday.AddHours(17).AddMinutes(40), hours.GetNextMarketClose(monday.AddHours(12), extendedMarketHours: false));
+        }
+
         [TestCase(Futures.Indices.CAC40, Market.EuronextParis, Currencies.EUR, 10)]
         [TestCase(Futures.Indices.CAC40Mini, Market.EuronextParis, Currencies.EUR, 1)]
         [TestCase(Futures.Indices.AEX, Market.EuronextAmsterdam, Currencies.EUR, 200)]
@@ -258,6 +293,8 @@ namespace QuantConnect.Tests.Algorithm
         [TestCase("BEL20", Market.EuronextBrussels, Currencies.EUR)]
         [TestCase("FTSEMIB", Market.EuronextMilan, Currencies.EUR)]
         [TestCase("OBX", Market.EuronextOslo, Currencies.NOK)]
+        [TestCase("PSI20", Market.EuronextLisbon, Currencies.EUR)]
+        [TestCase("ISEQ20", Market.EuronextDublin, Currencies.EUR)]
         public void AddEuronextIndexResolvesMarket(string ticker, string expectedMarket, string expectedQuoteCurrency)
         {
             var index = _algo.AddIndex(ticker, Resolution.Minute);

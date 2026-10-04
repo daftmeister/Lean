@@ -296,7 +296,7 @@ namespace QuantConnect
         /// Euronext Dublin
         /// </summary>
         public static Exchange EURONEXT_DUBLIN { get; }
-            = new("EURONEXT_DUBLIN", "XMSM", "Euronext Dublin", QuantConnect.Market.EuronextDublin, SecurityType.Equity);
+            = new("EURONEXT_DUBLIN", "XMSM", "Euronext Dublin", QuantConnect.Market.EuronextDublin, SecurityType.Equity, SecurityType.Index);
 
         /// <summary>
         /// Euronext Milan

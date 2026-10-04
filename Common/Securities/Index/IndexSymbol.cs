@@ -144,6 +144,8 @@ namespace QuantConnect.Securities.Index
             { "CAC40", Market.EuronextParis },
             { "BEL20", Market.EuronextBrussels },
             { "FTSEMIB", Market.EuronextMilan },
+            { "PSI20", Market.EuronextLisbon },
+            { "ISEQ20", Market.EuronextDublin },
             { "OBX", Market.EuronextOslo }
         };
 

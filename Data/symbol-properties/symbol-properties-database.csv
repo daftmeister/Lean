@@ -444,6 +444,7 @@ euronextbrussels,[*],equity,,EUR,1,0.001,1
 euronextbrussels,[*],index,,EUR,1,0.01,1
 
 euronextdublin,[*],equity,,EUR,1,0.001,1
+euronextdublin,[*],index,,EUR,1,0.01,1
 
 euronextmilan,FIB,future,FTSE MIB Index Futures,EUR,5,5,1
 euronextmilan,MINI,future,Mini FTSE MIB Index Futures,EUR,1,5,1
@@ -451,6 +452,7 @@ euronextmilan,[*],equity,,EUR,1,0.001,1
 euronextmilan,[*],index,,EUR,1,0.01,1
 
 euronextlisbon,[*],equity,,EUR,1,0.001,1
+euronextlisbon,[*],index,,EUR,1,0.01,1
 euronextlisbon,PSI,future,PSI 20 Index Futures,EUR,1,1,1
 
 euronextoslo,OBF,future,OBX Index Futures,NOK,100,0.25,1
