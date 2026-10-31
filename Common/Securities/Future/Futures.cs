@@ -1769,6 +1769,11 @@ namespace QuantConnect.Securities
             /// TecDAX Futures
             /// </summary>
             public const string TecDAX = "FTDX";
+
+            /// <summary>
+            /// EURO STOXX Small Index Futures
+            /// </summary>
+            public const string EuroStoxxSmall = "FSCE";
         }
 
         /// <summary>

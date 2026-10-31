@@ -1,0 +1,3 @@
+# estimate: Eurex publishes no margin history here; about 8% of a contract (50 x 400 points)
+date,initial,maintenance
+20000101,1600,1600

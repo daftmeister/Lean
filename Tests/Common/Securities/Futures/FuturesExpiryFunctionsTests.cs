@@ -154,6 +154,19 @@ namespace QuantConnect.Tests.Common.Securities.Futures
             Assert.AreEqual(expected, expiration(Time.ParseDate(input)));
         }
 
+        // EURO STOXX Small: quarterly, 12:00 CET on the 3rd Friday
+        [TestCase("20250101", "20250321 12:00")]
+        [TestCase("20250701", "20250919 12:00")]
+        [TestCase("20101101", "20101217 12:00")]
+        public void EuroStoxxSmallFutures(string input, string expectedStr)
+        {
+            var canonical = Symbol.Create(QuantConnect.Securities.Futures.Indices.EuroStoxxSmall, SecurityType.Future, Market.EUREX);
+            var expiration = FuturesExpiryFunctions.FuturesExpiryDictionary[canonical];
+
+            var expected = DateTime.ParseExact(expectedStr, "yyyyMMdd HH:mm", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, expiration(Time.ParseDate(input)));
+        }
+
         [Test]
         public void MCLFutures()
         {

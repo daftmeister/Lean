@@ -263,6 +263,21 @@ namespace QuantConnect.Tests.Algorithm
             Assert.AreEqual(monday.AddHours(17).AddMinutes(40), hours.GetNextMarketClose(monday.AddHours(12), extendedMarketHours: false));
         }
 
+        [Test]
+        public void EuroStoxxSmallFuturesTrade0750To2200()
+        {
+            var future = _algo.AddFuture(Futures.Indices.EuroStoxxSmall, Resolution.Minute, Market.EUREX);
+            var monday = new DateTime(2025, 6, 2);
+
+            Assert.AreEqual(Currencies.EUR, future.QuoteCurrency.Symbol);
+            Assert.AreEqual(50m, future.SymbolProperties.ContractMultiplier);
+            Assert.AreEqual(0.1m, future.SymbolProperties.MinimumPriceVariation);
+            Assert.IsTrue(FuturesExpiryFunctions.FuturesExpiryDictionary.ContainsKey(future.Symbol.Canonical));
+            Assert.AreEqual(monday.AddHours(7).AddMinutes(50), future.Exchange.Hours.GetNextMarketOpen(monday, extendedMarketHours: false));
+            Assert.AreEqual(monday.AddHours(22), future.Exchange.Hours.GetNextMarketClose(monday.AddHours(12), extendedMarketHours: false));
+            Assert.IsFalse(future.Exchange.Hours.IsDateOpen(new DateTime(2025, 12, 25)));
+        }
+
         [TestCase(Futures.Indices.CAC40, Market.EuronextParis, Currencies.EUR, 10)]
         [TestCase(Futures.Indices.CAC40Mini, Market.EuronextParis, Currencies.EUR, 1)]
         [TestCase(Futures.Indices.AEX, Market.EuronextAmsterdam, Currencies.EUR, 200)]

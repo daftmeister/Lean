@@ -225,6 +225,23 @@ namespace QuantConnect.Securities.Future
             {Symbol.Create(Futures.Indices.TecDAX, SecurityType.Future, Market.EUREX),
                 GetDAXFuturesExpiry(Market.EUREX, Futures.Indices.TecDAX)
             },
+            // EURO STOXX Small (FSCE): https://www.eurex.com/ex-en/markets/idx/stx/stoxx-europe-600/products/EURO-STOXX-Small-Index-Futures-70258
+            {Symbol.Create(Futures.Indices.EuroStoxxSmall, SecurityType.Future, Market.EUREX), (time =>
+                {
+                    // The 3 nearest quarterly months (Mar/3, Jun/6, Sep/9, Dec/12)
+                    while (!FutureExpirationCycles.HMUZ.Contains(time.Month))
+                    {
+                        time = time.AddMonths(1);
+                    }
+
+                    // Trading ends at 12:00 CET on the 3rd Friday of the contract month, or the exchange day before it
+                    var lastTradingDay = FuturesExpiryUtilityFunctions.ThirdFriday(time);
+                    var holidays = FuturesExpiryUtilityFunctions.GetExpirationHolidays(Market.EUREX, Futures.Indices.EuroStoxxSmall);
+                    lastTradingDay = FuturesExpiryUtilityFunctions.AddBusinessDaysIfHoliday(lastTradingDay, -1, holidays);
+
+                    return lastTradingDay.Add(new TimeSpan(12, 0, 0));
+                })
+            },
             // CAC 40 (FCE): https://live.euronext.com/en/product/index-futures/FCE-DPAR/contract-specification
             {Symbol.Create(Futures.Indices.CAC40, SecurityType.Future, Market.EuronextParis),
                 GetEuronextIndexFuturesExpiry(Market.EuronextParis, Futures.Indices.CAC40, quarterlyOnly: false, new TimeSpan(16, 0, 0))
