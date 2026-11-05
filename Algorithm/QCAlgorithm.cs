@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Globalization;
@@ -58,7 +59,6 @@ using QuantConnect.Commands;
 using Newtonsoft.Json;
 using QuantConnect.Securities.Index;
 using QuantConnect.Api;
-using Common.Util;
 
 namespace QuantConnect.Algorithm
 {
@@ -211,6 +211,17 @@ namespace QuantConnect.Algorithm
             SubscriptionManager = new SubscriptionManager(_timeKeeper);
 
             Securities = new SecurityManager(_timeKeeper);
+            Securities.CollectionChanged += (sender, args) =>
+            {
+                // the removed security's indicators and consolidators would otherwise be kept but never updated again
+                if (args.Action == NotifyCollectionChangedAction.Remove)
+                {
+                    foreach (Security security in args.OldItems)
+                    {
+                        RemoveSecurityConsolidators(security.Symbol);
+                    }
+                }
+            };
             Transactions = new SecurityTransactionManager(this, Securities);
             OrderFactory = new OrderFactory(this);
             Portfolio = new SecurityPortfolioManager(Securities, Transactions, Settings, DefaultOrderProperties);
@@ -3309,7 +3320,8 @@ namespace QuantConnect.Algorithm
         [DocumentationAttribute(MachineLearning)]
         public void SetObjectStore(IObjectStore objectStore)
         {
-            ObjectStore = new ObjectStore(objectStore);
+            // an already wrapped store, like the Python one, is used as is
+            ObjectStore = objectStore as ObjectStore ?? new ObjectStore(objectStore, Debug);
         }
 
         /// <summary>
